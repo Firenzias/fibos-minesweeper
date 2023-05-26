@@ -1,8 +1,14 @@
 {
-  "name": "src",
+  "name": "fibos-minesweeper",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "^18.12.1",
+    "npm": "^9.6.2"
+  },
+  "description": "https://github.com/Firenzias/fibos-minesweeper",
   "dependencies": {
+    "@babel/eslint-parser": "^7.21.8",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,7 +21,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint .",
+    "lint-fix": "npm run lint -- --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +42,15 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {
+    "env-cmd": "^10.1.0",
+    "eslint": "^8.41.0",
+    "react-scripts": "^5.0.1",
+    "sass": "^1.57.1"
+  },
+  "eslintIgnore": [
+    "assets",
+    "node_modules"
+  ]
 }
