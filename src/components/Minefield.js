@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { getFibonacciFromLine } from '../globalFunctions';
+import _ from 'lodash';
 
 function Minefield(props) {
   const Item = styled(Paper)(({ theme }) => ({
@@ -19,6 +20,7 @@ function Minefield(props) {
 
   // Init mines values with 0
   const initMinesValues = () => {
+    console.log('call initMinesValues');
     const values = {};
     for (let i = 0; i < envRows; i++) {
       for (let y = 0; y < envColumns; y++) {
@@ -36,11 +38,13 @@ function Minefield(props) {
   // checks if 5 consecutive numbers in the Fibonacci sequence are next to each other
   // if yes, these cells will briefly turn green and will be cleared
   useEffect(() => {
+    console.log('call useEffect');
     fibonacciCheck();
   }, [minesValues]);
 
 
   const clickedMine = (e) => {
+    console.log('call clickedMine');
     setClickCount(clickCount + 1);
     const clickedId = e.target.id;
 
@@ -64,16 +68,17 @@ function Minefield(props) {
     setMinesValues({ ...minesValues || {}, ...changedObjects });
   };
 
-  const clearFibonacisRow = (indexObjects) => {
-    const changedObjects = {};
-    indexObjects.forEach((indexObject) => {
-      changedObjects[Object.keys(indexObject)[0]] = 0;
-    });
-    setMinesValues({ ...minesValues || {}, ...changedObjects });
-  };
+  // const clearFibonacisRow = (indexObjects) => {
+  //   console.log('call clearFibonacisRow');
+  //   const changedObjects = {};
+  //   indexObjects.forEach((indexObject) => {
+  //     changedObjects[Object.keys(indexObject)[0]] = 0;
+  //   });
+  //   setMinesValues({ ...minesValues || {}, ...changedObjects });
+  // };
 
   const getMinesObjects = (envColumns, envRows) => {
-    console.log('getMinesObjects');
+    console.log('call getMinesObjects');
     const mines = [];
     for (let i = 0; i < envRows; i++) {
       const line = [];
@@ -97,6 +102,7 @@ function Minefield(props) {
   // cycles minesValues, if the number is fibonacci, continues on all 4 sides if some neighbour number even exists... and then checks if is next fibonnaci / next-2 fibonnaci...
   // if yes, checks whole line, then triggers strike if there are the necessary number of them (REACT_APP_FIBONACCI_STRIKE)
   const fibonacciCheck = () => {
+    console.log('call fibonacciCheck');
     const lines = [];
     const columns = [];
 
@@ -132,23 +138,7 @@ function Minefield(props) {
     // TODO can be optimized
 
     // console.log('lines', lines);
-    columns.forEach((column) => {
-      // right to left (and since lines contains also columns instead of rows so also down to up)
-      const resL = getFibonacciFromLine(column, envStrike);
-      const resR = getFibonacciFromLine(column.reverse(), envStrike);
-
-      if (resL.res === true) {
-        console.log('clearing top to bottom', resL);
-        clearFibonacisRow(resL.indexes);
-      }
-      if (resR.res === true) {
-        console.log('clearing bottom to top', resR);
-        clearFibonacisRow(resR.indexes);
-      }
-    });
-
-
-    // console.log('lines', lines);
+    const changedObjects = {};
     lines.forEach((line) => {
       // right to left (and since lines contains also columns instead of rows so also down to up)
       const resL = getFibonacciFromLine(line, envStrike);
@@ -156,22 +146,50 @@ function Minefield(props) {
 
       if (resL.res === true) {
         console.log('clearing left to right', resL);
-        clearFibonacisRow(resL.indexes);
+        resL.indexes.forEach((indexObject) => {
+          changedObjects[Object.keys(indexObject)[0]] = 0;
+        });
       }
       if (resR.res === true) {
         console.log('clearing right to left', resR);
-        clearFibonacisRow(resR.indexes);
+        resR.indexes.forEach((indexObject) => {
+          changedObjects[Object.keys(indexObject)[0]] = 0;
+        });
       }
     });
+
+    // console.log('lines', lines);
+    columns.forEach((column) => {
+      // right to left (and since lines contains also columns instead of rows so also down to up)
+      const resL = getFibonacciFromLine(column, envStrike);
+      const resR = getFibonacciFromLine(column.reverse(), envStrike);
+
+      if (resL.res === true) {
+        console.log('clearing top to bottom', resL);
+        resL.indexes.forEach((indexObject) => {
+          changedObjects[Object.keys(indexObject)[0]] = 0;
+        });
+      }
+      if (resR.res === true) {
+        console.log('clearing bottom to top', resR);
+        resR.indexes.forEach((indexObject) => {
+          changedObjects[Object.keys(indexObject)[0]] = 0;
+        });
+      }
+    });
+    if ( ! _.isEmpty(changedObjects)) {
+      setMinesValues({ ...minesValues || {}, ...changedObjects });
+    }
   };
 
+  console.log('call rerender');
   return (
     <div>
       <h1>{`Fibo's minesweeper`}</h1>
       < p > {`You clicked ${clickCount} times.`
       }</p >
       <Button variant="outlined" onClick={() => {
-        setMinesValues(initMinesValues());
+        setMinesValues(initMinesValues);
         setClickCount(0);
       }}>Clear</Button>
       <Grid container spacing={1} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
