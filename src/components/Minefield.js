@@ -1,24 +1,8 @@
-import * as React from 'react';
+import { React, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-
-const getMinesObjects = (envColumns, envRows) => {
-  console.log([envColumns, envRows]);
-  const mines = [];
-  for (let i = 0; i < envColumns; i++) {
-    const line = [];
-    for (let y = 0; y < envRows; y++) {
-      line.push(y);
-    }
-    mines.push(line);
-  }
-
-  console.log(mines);
-
-  return mines;
-};
 
 function Minefield(props) {
   const Item = styled(Paper)(({ theme }) => ({
@@ -28,12 +12,41 @@ function Minefield(props) {
     height: '2rem',
     width: '2rem',
     lineHeight: '2rem',
+    cursor: 'pointer',
   }));
+
+  // eslint-disable-next-line no-unused-vars
+  const [minesValues, setMinesValues] = useState({});
+
+  const clickedMine = (e) => {
+    const id = e.target.id;
+    console.log('e.target.id', id);
+    let val = minesValues[id] || 0;
+    console.log('val', val);
+    console.log('minesValues', minesValues);
+    setMinesValues( { ...minesValues || {}, [id]: ++val });
+  };
+
+  const getMinesObjects = (envColumns, envRows) => {
+    const mines = [];
+    for (let i = 0; i < envColumns; i++) {
+      const line = [];
+      for (let y = 0; y < envRows; y++) {
+        const key = `${i}-${y}`;
+        line.push(
+          <Item key={key} id={key} elevation={1} onClick={(e) => clickedMine(e)}>
+            {minesValues[key]}
+          </Item>,
+        );
+      }
+      mines.push(line);
+    }
+    return mines;
+  };
 
 
   // eslint-disable-next-line no-unused-vars
   const { envColumns, envRows } = props;
-  console.log('envColumns, envRows', props);
 
   // eslint-disable-next-line no-unused-vars
   const minesGrid = getMinesObjects(envColumns, envRows);
@@ -46,7 +59,10 @@ function Minefield(props) {
           <ThemeProvider theme={createTheme({ palette: { mode: 'light' }})}>
             <Box
               sx={{
-                p: 1,
+                paddingTop: 'none',
+                paddingBottom: 1,
+                paddingLeft: 1,
+                paddingRight: 1,
                 bgcolor: 'background.default',
                 display: 'block',
                 gridTemplateColumns: { md: '1fr 1fr' },
@@ -59,7 +75,10 @@ function Minefield(props) {
                     <Box
                       key={i}
                       sx={{
-                        p: 1,
+                        paddingTop: 'none',
+                        paddingBottom: 1,
+                        paddingLeft: 1,
+                        paddingRight: 1,
                         bgcolor: 'background.default',
                         display: 'flex',
                         gridTemplateColumns: { md: '1fr 1fr' },
@@ -68,11 +87,7 @@ function Minefield(props) {
                     >
                       {
                         (mineLine.map((mine, y) => {
-                          return (
-                            <Item key={`${y}-${i}`} elevation={2}>
-                              {'2'}
-                            </Item>
-                          );
+                          return ( mine );
                         },
                         ))
                       }
