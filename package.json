@@ -9,6 +9,10 @@
   "description": "https://github.com/Firenzias/fibos-minesweeper",
   "dependencies": {
     "@babel/eslint-parser": "^7.21.8",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.13.2",
+    "@mui/system": "^5.13.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -46,6 +50,12 @@
   "devDependencies": {
     "env-cmd": "^10.1.0",
     "eslint": "^8.41.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "react-scripts": "^5.0.1",
     "sass": "^1.57.1"
   },
