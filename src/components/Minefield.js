@@ -113,9 +113,9 @@ function Minefield(props) {
       const line = [];
       for (let y = 0; y < envColumns; y++) {
         const key = `${i}-${y}`;
-        if (minesValues[key]) {
-          line.push({ [key]: minesValues[key] });
-        }
+        // if (minesValues[key]) {
+        line.push({ [key]: minesValues[key] });
+        // }
       }
       lines.push(line);
     }
@@ -127,9 +127,9 @@ function Minefield(props) {
       for (let i = 0; i < envRows; i++) {
         const key = `${i}-${y}`;
         // ignoring zeros
-        if (minesValues[key]) {
-          column.push({ [key]: minesValues[key] });
-        }
+        // if (minesValues[key]) {
+        column.push({ [key]: minesValues[key] });
+        // }
       }
       columns.push(column);
     }
