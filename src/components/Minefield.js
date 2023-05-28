@@ -20,7 +20,7 @@ function Minefield(props) {
 
   // Init mines values with 0
   const initMinesValues = () => {
-    console.log('call initMinesValues');
+    debug && console.log('call initMinesValues');
     const values = {};
     for (let i = 0; i < envRows; i++) {
       for (let y = 0; y < envColumns; y++) {
@@ -31,20 +31,20 @@ function Minefield(props) {
     return values;
   };
 
-  const { envColumns, envRows, envStrike } = props;
+  const { envColumns, envRows, envStrike, debug } = props;
   const [minesValues, setMinesValues] = useState(initMinesValues());
   const [clickCount, setClickCount] = useState(0);
 
   // checks if 5 consecutive numbers in the Fibonacci sequence are next to each other
   // if yes, these cells will briefly turn green and will be cleared
   useEffect(() => {
-    console.log('call useEffect');
+    debug && console.log('call useEffect');
     fibonacciCheck();
   }, [minesValues]);
 
 
   const clickedMine = (e) => {
-    console.log('call clickedMine');
+    debug && console.log('call clickedMine');
     setClickCount(clickCount + 1);
     const clickedId = e.target.id;
 
@@ -78,7 +78,7 @@ function Minefield(props) {
   // };
 
   const getMinesObjects = (envColumns, envRows) => {
-    console.log('call getMinesObjects');
+    debug && console.log('call getMinesObjects');
     const mines = [];
     for (let i = 0; i < envRows; i++) {
       const line = [];
@@ -102,7 +102,7 @@ function Minefield(props) {
   // cycles minesValues, if the number is fibonacci, continues on all 4 sides if some neighbour number even exists... and then checks if is next fibonnaci / next-2 fibonnaci...
   // if yes, checks whole line, then triggers strike if there are the necessary number of them (REACT_APP_FIBONACCI_STRIKE)
   const fibonacciCheck = () => {
-    console.log('call fibonacciCheck');
+    debug && console.log('call fibonacciCheck');
     const lines = [];
     const columns = [];
 
@@ -182,7 +182,7 @@ function Minefield(props) {
     }
   };
 
-  console.log('call rerender');
+  debug && console.log('call rerender');
   return (
     <div>
       <h1>{`Fibo's minesweeper`}</h1>
