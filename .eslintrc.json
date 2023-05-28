@@ -1,0 +1,91 @@
+{
+  "plugins": [
+    "react",
+    "react-hooks"
+  ],
+  "parser": "@babel/eslint-parser",
+  "extends": [
+    "eslint:recommended",
+    "google",
+    "plugin:react/recommended"
+  ],
+  "root": true,
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "jest": true
+  },
+  "settings": {
+    "react": {
+      "createClass": "createReactClass",
+      "pragma": "React",
+      "version": "detect",
+      "flowVersion": "0.53"
+    },
+    "propWrapperFunctions": [
+      "forbidExtraProps",
+      {
+        "property": "freeze",
+        "object": "Object"
+      },
+      {
+        "property": "myFavoriteWrapper"
+      }
+    ],
+    "linkComponents": [
+      "Hyperlink",
+      {
+        "name": "Link",
+        "linkAttribute": "to"
+      }
+    ]
+  },
+  "parserOptions": {
+    "ecmaVersion": 11,
+    "requireConfigFile": false,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    },
+    "babelOptions": {
+      "presets": [
+        "@babel/preset-react"
+      ]
+    }
+  },
+  "rules": {
+    "max-len": [
+      2,
+      300,
+      4,
+      {
+        "ignoreUrls": true
+      }
+    ],
+    "no-console": 0,
+    "object-curly-spacing": [
+      2,
+      "always",
+      {
+        "objectsInObjects": false,
+        "arraysInObjects": false
+      }
+    ],
+    "react/prop-types": 0,
+    "require-jsdoc": 0,
+    "valid-jsdoc": 0,
+    "indent": [
+      "error",
+      2,
+      {
+        "ignoredNodes": [
+          "TemplateLiteral"
+        ]
+      }
+    ],
+    "eol-last": 1,
+    "no-invalid-this": 0
+  }
+}
