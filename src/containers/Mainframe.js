@@ -6,7 +6,9 @@ const Mainframe = () => {
   const envColumns = parseInt(process.env.REACT_APP_COLUMNS);
   const envRows = parseInt(process.env.REACT_APP_ROWS);
   const envStrike = parseInt(process.env.REACT_APP_FIBONACCI_STRIKE);
-  const debug = process.env.REACT_APP_FIBONACCI_STRIKE && process.env.REACT_APP_FIBONACCI_STRIKE === 'true' ? true : false;
+  const debug = process.env.REACT_APP_DEBUG && process.env.REACT_APP_DEBUG === 'true' ? true : false;
+
+  debug && console.log('debug console logs on, envs:', { envColumns, envRows, envStrike, debug });
 
   // init check
   if (!(_.isInteger(envColumns) && _.isInteger(envRows) && _.isInteger(envStrike))) {
