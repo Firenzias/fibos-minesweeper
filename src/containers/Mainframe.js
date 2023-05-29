@@ -16,7 +16,9 @@ const Mainframe = () => {
   }
 
   return (
-    <Minefield envColumns={envColumns} envRows={envRows} envStrike={envStrike} debug={debug} />
+    <div>
+      <Minefield envColumns={envColumns} envRows={envRows} envStrike={envStrike} debug={debug} />
+    </div>
   );
 };
 

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { React, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
@@ -5,9 +6,9 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { getFibonacciFromLine } from '../globalFunctions';
-import _ from 'lodash';
 
 function Minefield(props) {
+  // Default style by MUI for Tile (paper)
   const Item = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
     textAlign: 'center',
@@ -20,19 +21,22 @@ function Minefield(props) {
 
   // Init mines values with 0
   const initMinesValues = () => {
-    debug && console.log('call initMinesValues');
-    const values = {};
-    for (let i = 0; i < envRows; i++) {
-      for (let y = 0; y < envColumns; y++) {
-        const key = `${i}-${y}`;
-        values[key] = { val: 0 };
-      }
-    }
-    return values;
+    // debug && console.log('call initMinesValues');
+    // const values = {};
+    // for (let i = 0; i < envRows; i++) {
+    //   for (let y = 0; y < envColumns; y++) {
+    //     const key = `${i}-${y}`;
+    //     values[key] = { val: 0 };
+    //   }
+    // }
+    // return values;
   };
 
+  // Arguments from .env
   const { envColumns, envRows, envStrike, debug } = props;
-  const [minesValues, setMinesValues] = useState(initMinesValues);
+
+  // mines state - { val: Num, class: [] }
+  const [minesStateObj, setMinesStateObj] = useState({});
   const [clickCount, setClickCount] = useState(0);
 
   // checks if 5 consecutive numbers in the Fibonacci sequence are next to each other
@@ -40,63 +44,63 @@ function Minefield(props) {
   useEffect(() => {
     debug && console.log('call useEffect');
     fibonacciCheck();
-  }, [minesValues]);
+  }, [minesStateObj]);
 
-  console.log('minesValues', minesValues);
-
-
+  // user clicked some mine in the field, adding +1 on each side of the grid cross
   const clickedMine = (e) => {
     debug && console.log('call clickedMine');
     setClickCount(clickCount + 1);
     const clickedId = e.target.id;
 
     // clearing previous classes since every class lasts 1 click
-    console.log('minesValues', minesValues);
-    const changedObjects = {};
-    for (const [key, value] of Object.entries(minesValues)) {
-      changedObjects[key] = { val: value.val };
+    const changedMines = {};
+    for (const [key, value] of Object.entries(minesStateObj)) {
+      changedMines[key] = { val: value?.val };
     }
-
 
     // all values in the cells in the same row and column are increased by 1
     const [iStatic, yStatic] = clickedId.split('-');
 
+    const _changeObjectToClicked = (key) => {
+      const val = minesStateObj[key]?.val || 0;
+      // setting css class clicked so the mine's background will be animated
+      return { val: (val + 1), class: ['clicked']};
+    };
 
+    // horizontal
     for (let i = 0; i < envRows; i++) {
       const key = `${i}-${yStatic}`;
-      const val = minesValues[key]?.val;
-      changedObjects[key] = { val: (val + 1), class: ['clicked']};
+      changedMines[key] = _changeObjectToClicked(key);
     }
 
+    // vertical
     for (let y = 0; y < envColumns; y++) {
       const key = `${iStatic}-${y}`;
-      const val = minesValues[key]?.val;
-      changedObjects[key] = { val: (val + 1), class: ['clicked']};
+      changedMines[key] = _changeObjectToClicked(key);
     }
 
-
-    setMinesValues({ ...minesValues || {}, ...changedObjects });
+    // change state
+    setMinesStateObj({ ...minesStateObj || {}, ...changedMines });
   };
 
-  // const clearFibonacisRow = (indexObjects) => {
-  //   console.log('call clearFibonacisRow');
-  //   const changedObjects = {};
-  //   indexObjects.forEach((indexObject) => {
-  //     changedObjects[Object.keys(indexObject)[0]] = 0;
-  //   });
-  //   setMinesValues({ ...minesValues || {}, ...changedObjects });
-  // };
-
+  // returns mines - react components with proper state
   const getMinesObjects = (envColumns, envRows) => {
     debug && console.log('call getMinesObjects');
     const mines = [];
+    // cycle grid on columns and then by rows
     for (let i = 0; i < envRows; i++) {
       const line = [];
       for (let y = 0; y < envColumns; y++) {
         const key = `${i}-${y}`;
         line.push(
-          <Item key={key} id={key} elevation={1} className={`mine ${minesValues[key].class?.join(' ')}`} onClick={(e) => clickedMine(e)}>
-            {minesValues[key].val === 0 ? '' : minesValues[key].val}
+          <Item
+            key={key}
+            id={key}
+            elevation={1} // something like border.
+            className={`mine ${minesStateObj[key]?.class ? minesStateObj[key].class?.join(' ') : ''}`} // default class "mine", then some animating-color state as strike or clicked.
+            onClick={(e) => clickedMine(e)}
+          >
+            {minesStateObj[key]?.val === 0 ? '' : minesStateObj[key]?.val}
           </Item>,
         );
       }
@@ -105,11 +109,18 @@ function Minefield(props) {
     return mines;
   };
 
+  const getFiboChanges = (fibRes) => {
+    const change = {};
+    if ( fibRes.res ) {
+      debug && console.log('clearing ', fibRes);
+      fibRes.indexes.forEach((strikeObject) => {
+        change[Object.keys(strikeObject)[0]] = { val: 0, class: ['strike']};
+      });
+    }
+    return change;
+  };
 
-  // eslint-disable-next-line no-unused-vars
-  // const minesGrid = getMinesObjects(envColumns, envRows);
-
-  // cycles minesValues, if the number is fibonacci, continues on all 4 sides if some neighbour number even exists... and then checks if is next fibonnaci / next-2 fibonnaci...
+  // cycles minesStateObj, if the number is fibonacci, continues on all 4 sides if some neighbour number even exists... and then checks if is next fibonnaci / next-2 fibonnaci...
   // if yes, checks whole line, then triggers strike if there are the necessary number of them (REACT_APP_FIBONACCI_STRIKE)
   const fibonacciCheck = () => {
     debug && console.log('call fibonacciCheck');
@@ -123,9 +134,9 @@ function Minefield(props) {
       const line = [];
       for (let y = 0; y < envColumns; y++) {
         const key = `${i}-${y}`;
-        // if (minesValues[key]) {
-        line.push({ [key]: minesValues[key] });
-        // }
+        if (minesStateObj[key]) {
+          line.push({ [key]: minesStateObj[key] });
+        }
       }
       lines.push(line);
     }
@@ -137,64 +148,32 @@ function Minefield(props) {
       for (let i = 0; i < envRows; i++) {
         const key = `${i}-${y}`;
         // ignoring zeros
-        // if (minesValues[key]) {
-        column.push({ [key]: minesValues[key] });
-        // }
+        if (minesStateObj[key]) {
+          column.push({ [key]: minesStateObj[key] });
+        }
       }
       columns.push(column);
     }
 
     // at least envstrike number neighbours
-    // TODO can be optimized
-
-    // console.log('lines', lines);
-    const changedObjects = {};
+    // TODO can be optimized - no need to process all arrays but only thick cross up to down, left to right from the place of clicking
+    let changedMines = {};
     lines.forEach((line) => {
-      // right to left (and since lines contains also columns instead of rows so also down to up)
-      const resL = getFibonacciFromLine(line, envStrike);
-      const resR = getFibonacciFromLine(line.reverse(), envStrike);
-
-      if (resL.res === true) {
-        console.log('clearing left to right', resL);
-        resL.indexes.forEach((indexObject) => {
-          console.log('indexObject', indexObject);
-          // changedObjects[Object.keys(indexObject)[0]] = 0;
-          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
-        });
-      }
-      if (resR.res === true) {
-        console.log('clearing right to left', resR);
-        resR.indexes.forEach((indexObject) => {
-          // changedObjects[Object.keys(indexObject)[0]] = 0;
-          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
-        });
-      }
+      // left to right
+      changedMines = { ...changedMines, ...getFiboChanges(getFibonacciFromLine(line, envStrike)) };
+      // right to left
+      changedMines = { ...changedMines, ...getFiboChanges(getFibonacciFromLine(line.reverse(), envStrike)) };
     });
 
-    // console.log('lines', lines);
     columns.forEach((column) => {
-      // right to left (and since lines contains also columns instead of rows so also down to up)
-      const resL = getFibonacciFromLine(column, envStrike);
-      const resR = getFibonacciFromLine(column.reverse(), envStrike);
-
-      if (resL.res === true) {
-        console.log('clearing top to bottom', resL);
-        resL.indexes.forEach((indexObject) => {
-          // changedObjects[Object.keys(indexObject)[0]] = 0;
-          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
-        });
-      }
-      if (resR.res === true) {
-        console.log('clearing bottom to top', resR);
-        resR.indexes.forEach((indexObject) => {
-          // changedObjects[Object.keys(indexObject)[0]] = 0;
-          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
-        });
-      }
+      // up to down
+      changedMines = { ...changedMines, ...getFiboChanges(getFibonacciFromLine(column, envStrike)) };
+      // down to up
+      changedMines = { ...changedMines, ...getFiboChanges(getFibonacciFromLine(column.reverse(), envStrike)) };
     });
-    if (!_.isEmpty(changedObjects)) {
-      console.log('changedObjects in fibo', changedObjects);
-      setMinesValues({ ...minesValues || {}, ...changedObjects });
+    // checking if there are some changed objects
+    if (!_.isEmpty(changedMines)) {
+      setMinesStateObj({ ...minesStateObj || {}, ...changedMines });
     }
   };
 
@@ -202,15 +181,18 @@ function Minefield(props) {
   return (
     <div>
       <h1>{`Fibo's minesweeper`}</h1>
+      <p>{`In "Fibo's minesweeper," uncover the grid by clicking on cells to form Fibonacci sequences, with a value of 0 when nothing is revealed, and aim to achieve as many sequences as possible before losing interest.`}</p>
+      <hr />
       < p > {`You clicked ${clickCount} times.`
       }</p >
       <Button variant="outlined" onClick={() => {
-        setMinesValues(initMinesValues);
+        setMinesStateObj(initMinesValues);
         setClickCount(0);
       }}>Clear</Button>
       <Grid container spacing={1} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
         <Grid>
           <ThemeProvider theme={createTheme({ palette: { mode: 'light' }})}>
+            {/* default styling by MUI */}
             <Box
               sx={{
                 paddingTop: 'none',
@@ -227,7 +209,7 @@ function Minefield(props) {
                 getMinesObjects(envColumns, envRows).map((mineLine, i) => {
                   return (
                     <Box
-                      key={i}
+                      key={mineLine[i].key}
                       sx={{
                         paddingTop: 'none',
                         paddingBottom: 1,
@@ -240,7 +222,7 @@ function Minefield(props) {
                       }}
                     >
                       {
-                        (mineLine.map((mine, y) => {
+                        (mineLine.map((mine) => {
                           return mine;
                         },
                         ))
@@ -253,6 +235,8 @@ function Minefield(props) {
           </ThemeProvider>
         </Grid>
       </Grid>
+      <hr />
+      <p>Stay in touch. <a href='https://github.com/Firenzias/fibos-minesweeper' target="_blank" rel="noreferrer" >Firenzias@GitHub</a></p>
     </div >
   );
 }
