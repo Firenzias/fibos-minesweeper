@@ -11,3 +11,34 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.mine {
+  background-color: whitesmoke;
+  -webkit-transition: background-color 2s ease-out;
+  -moz-transition: background-color 2s ease-out;
+  -o-transition: background-color 2s ease-out;
+  transition: background-color 2s ease-out;
+}
+
+/* .strike {
+  background-color: #88B04B !important;
+} */
+
+.strike {
+  animation: strike 1s alternate;
+} 
+
+.clicked {
+  animation: clicked 1s alternate;
+} 
+
+
+@keyframes clicked {
+  from {background-color: unset;}
+  to {background-color: #EFC050;}
+}
+
+@keyframes strike {
+  from {background-color: unset;}
+  to {background-color: #88B04B;}
+}

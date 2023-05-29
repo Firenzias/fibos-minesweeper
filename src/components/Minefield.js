@@ -25,14 +25,14 @@ function Minefield(props) {
     for (let i = 0; i < envRows; i++) {
       for (let y = 0; y < envColumns; y++) {
         const key = `${i}-${y}`;
-        values[key] = 0;
+        values[key] = { val: 0 };
       }
     }
     return values;
   };
 
   const { envColumns, envRows, envStrike, debug } = props;
-  const [minesValues, setMinesValues] = useState(initMinesValues());
+  const [minesValues, setMinesValues] = useState(initMinesValues);
   const [clickCount, setClickCount] = useState(0);
 
   // checks if 5 consecutive numbers in the Fibonacci sequence are next to each other
@@ -42,28 +42,38 @@ function Minefield(props) {
     fibonacciCheck();
   }, [minesValues]);
 
+  console.log('minesValues', minesValues);
+
 
   const clickedMine = (e) => {
     debug && console.log('call clickedMine');
     setClickCount(clickCount + 1);
     const clickedId = e.target.id;
 
+    // clearing previous classes since every class lasts 1 click
+    console.log('minesValues', minesValues);
     const changedObjects = {};
+    for (const [key, value] of Object.entries(minesValues)) {
+      changedObjects[key] = { val: value.val };
+    }
+
 
     // all values in the cells in the same row and column are increased by 1
     const [iStatic, yStatic] = clickedId.split('-');
 
+
     for (let i = 0; i < envRows; i++) {
       const key = `${i}-${yStatic}`;
-      const val = minesValues[key];
-      changedObjects[key] = (val + 1);
+      const val = minesValues[key]?.val;
+      changedObjects[key] = { val: (val + 1), class: ['clicked']};
     }
 
     for (let y = 0; y < envColumns; y++) {
       const key = `${iStatic}-${y}`;
-      const val = minesValues[key];
-      changedObjects[key] = (val + 1);
+      const val = minesValues[key]?.val;
+      changedObjects[key] = { val: (val + 1), class: ['clicked']};
     }
+
 
     setMinesValues({ ...minesValues || {}, ...changedObjects });
   };
@@ -85,8 +95,8 @@ function Minefield(props) {
       for (let y = 0; y < envColumns; y++) {
         const key = `${i}-${y}`;
         line.push(
-          <Item key={key} id={key} elevation={1} onClick={(e) => clickedMine(e)}>
-            {minesValues[key] === 0 ? '' : minesValues[key]}
+          <Item key={key} id={key} elevation={1} className={`mine ${minesValues[key].class?.join(' ')}`} onClick={(e) => clickedMine(e)}>
+            {minesValues[key].val === 0 ? '' : minesValues[key].val}
           </Item>,
         );
       }
@@ -97,7 +107,7 @@ function Minefield(props) {
 
 
   // eslint-disable-next-line no-unused-vars
-  const minesGrid = getMinesObjects(envColumns, envRows);
+  // const minesGrid = getMinesObjects(envColumns, envRows);
 
   // cycles minesValues, if the number is fibonacci, continues on all 4 sides if some neighbour number even exists... and then checks if is next fibonnaci / next-2 fibonnaci...
   // if yes, checks whole line, then triggers strike if there are the necessary number of them (REACT_APP_FIBONACCI_STRIKE)
@@ -147,13 +157,16 @@ function Minefield(props) {
       if (resL.res === true) {
         console.log('clearing left to right', resL);
         resL.indexes.forEach((indexObject) => {
-          changedObjects[Object.keys(indexObject)[0]] = 0;
+          console.log('indexObject', indexObject);
+          // changedObjects[Object.keys(indexObject)[0]] = 0;
+          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
         });
       }
       if (resR.res === true) {
         console.log('clearing right to left', resR);
         resR.indexes.forEach((indexObject) => {
-          changedObjects[Object.keys(indexObject)[0]] = 0;
+          // changedObjects[Object.keys(indexObject)[0]] = 0;
+          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
         });
       }
     });
@@ -167,17 +180,20 @@ function Minefield(props) {
       if (resL.res === true) {
         console.log('clearing top to bottom', resL);
         resL.indexes.forEach((indexObject) => {
-          changedObjects[Object.keys(indexObject)[0]] = 0;
+          // changedObjects[Object.keys(indexObject)[0]] = 0;
+          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
         });
       }
       if (resR.res === true) {
         console.log('clearing bottom to top', resR);
         resR.indexes.forEach((indexObject) => {
-          changedObjects[Object.keys(indexObject)[0]] = 0;
+          // changedObjects[Object.keys(indexObject)[0]] = 0;
+          changedObjects[Object.keys(indexObject)[0]] = { val: 0, class: ['strike']};
         });
       }
     });
-    if ( ! _.isEmpty(changedObjects)) {
+    if (!_.isEmpty(changedObjects)) {
+      console.log('changedObjects in fibo', changedObjects);
       setMinesValues({ ...minesValues || {}, ...changedObjects });
     }
   };
@@ -208,7 +224,7 @@ function Minefield(props) {
               }}
             >
               {
-                minesGrid.map((mineLine, i) => {
+                getMinesObjects(envColumns, envRows).map((mineLine, i) => {
                   return (
                     <Box
                       key={i}
