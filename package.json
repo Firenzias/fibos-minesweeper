@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "node": "^18.12.1",
-    "npm": "^9.6.2"
+    "npm": "^9.5.1"
   },
   "description": "https://github.com/Firenzias/fibos-minesweeper",
   "dependencies": {
@@ -24,6 +24,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:main": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint .",

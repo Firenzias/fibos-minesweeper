@@ -21,15 +21,6 @@ function Minefield(props) {
 
   // Init mines values with 0
   const initMinesValues = () => {
-    // debug && console.log('call initMinesValues');
-    // const values = {};
-    // for (let i = 0; i < envRows; i++) {
-    //   for (let y = 0; y < envColumns; y++) {
-    //     const key = `${i}-${y}`;
-    //     values[key] = { val: 0 };
-    //   }
-    // }
-    // return values;
   };
 
   // Arguments from .env
@@ -109,6 +100,7 @@ function Minefield(props) {
     return mines;
   };
 
+  // returns array of objects to put in minesStateObj
   const getFiboChanges = (fibRes) => {
     const change = {};
     if ( fibRes.res ) {
@@ -120,7 +112,8 @@ function Minefield(props) {
     return change;
   };
 
-  // cycles minesStateObj, if the number is fibonacci, continues on all 4 sides if some neighbour number even exists... and then checks if is next fibonnaci / next-2 fibonnaci...
+  // cycles minesStateObj, if the number is fibonacci, continues on all 4 sides if some neighbour number even exists...
+  // and then checks if is next fibonnaci / next-2 fibonnaci...
   // if yes, checks whole line, then triggers strike if there are the necessary number of them (REACT_APP_FIBONACCI_STRIKE)
   const fibonacciCheck = () => {
     debug && console.log('call fibonacciCheck');
@@ -178,6 +171,7 @@ function Minefield(props) {
   };
 
   debug && console.log('call rerender');
+  // rendering
   return (
     <div>
       <h1>{`Fibo's minesweeper`}</h1>
