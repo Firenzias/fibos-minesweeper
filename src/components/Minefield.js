@@ -19,10 +19,6 @@ function Minefield(props) {
     cursor: 'pointer',
   }));
 
-  // Init mines values with 0
-  const initMinesValues = () => {
-  };
-
   // Arguments from .env
   const { envColumns, envRows, envStrike, debug } = props;
 
@@ -97,6 +93,7 @@ function Minefield(props) {
       }
       mines.push(line);
     }
+    console.log('mines', mines);
     return mines;
   };
 
@@ -180,7 +177,7 @@ function Minefield(props) {
       < p > {`You clicked ${clickCount} times.`
       }</p >
       <Button variant="outlined" onClick={() => {
-        setMinesStateObj(initMinesValues);
+        setMinesStateObj({});
         setClickCount(0);
       }}>Clear</Button>
       <Grid container spacing={1} style={{ marginTop: '1rem', marginBottom: '1rem' }}>
