@@ -1,17 +1,22 @@
-import _ from 'lodash';
 
-// array of integers, checks if there is increasing or decreasing fibonnaci sequence with min
-// 2 checks of fibonaccis sequence:
-// 1. no 2 zeros next to each other
-// 2. a + b = c
+
+/**
+ *
+ * , checks if there is increasing or decreasing fibonnaci sequence with min
+ * 2 checks of fibonaccis sequence:
+ * 1. no 2 zeros next to each other
+ * 2. a + b = c
+ *
+ * @param   whatsit  The whatsit to use (or whatever).
+ * @returns object, { res: bool, indexes: indexes }
+ */
+
 export function getFibonacciFromLine(mineLine, min) {
   let countOfPreviousFibos = 0;
-  let i = 0;
-  // eslint-disable-next-line no-unused-vars
-  for (const [key, value] of Object.entries(mineLine)) {
-    const a = !_.isEmpty(mineLine[i]) ? Object.values(mineLine[i])[0] : undefined;
-    const b = !_.isEmpty(mineLine[i + 1]) ? Object.values(mineLine[i + 1])[0] : undefined;
-    const c = !_.isEmpty(mineLine[i + 2]) ? Object.values(mineLine[i + 2])[0] : undefined;
+  for (let i = 0; i < Object.keys(mineLine).length; i++) {
+    const a = mineLine[i] ? mineLine[i][Object.keys(mineLine[i])].val : undefined;
+    const b = mineLine[i + 1] ? mineLine[i + 1][Object.keys(mineLine[i + 1])].val : undefined;
+    const c = mineLine[i + 2] ? mineLine[i + 2][Object.keys(mineLine[i + 2])].val : undefined;
 
     // min - 2 because:
     // a + b === c ... 1
@@ -28,7 +33,6 @@ export function getFibonacciFromLine(mineLine, min) {
     }
     if (a + b === 0) {
       countOfPreviousFibos = 0;
-      ++i;
       continue;
     }
     if (a + b === c) {
@@ -36,7 +40,6 @@ export function getFibonacciFromLine(mineLine, min) {
     } else {
       countOfPreviousFibos = 0;
     }
-    ++i;
   }
 
   return { res: false, indexes: []};
