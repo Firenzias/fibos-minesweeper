@@ -1,5 +1,5 @@
 # Fibo's Minesweeper
-Fibonacci's variant of minesweeper
+Fibonacci's variant of the Minesweeper game
 
 This is a small project quest by one of IT company from Brno. This project is meant to demonstrate my skills regarding algoritmization and stuff.
 
