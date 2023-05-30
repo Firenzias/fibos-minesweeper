@@ -1,16 +1,6 @@
-# Node.js dependencies
-node_modules
-
-# Build artifacts
+.gitignore
+.dockerignore
+Dockerfile
 build
-dist
-
-# Development files
-.DS_Store
-
-# Testing files
-coverage
-
-# Dependency lock files
-package-lock.json
-yarn.lock
+node_modules
+README.md
