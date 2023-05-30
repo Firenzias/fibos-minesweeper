@@ -93,7 +93,6 @@ function Minefield(props) {
       }
       mines.push(line);
     }
-    console.log('mines', mines);
     return mines;
   };
 
